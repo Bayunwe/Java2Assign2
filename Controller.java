@@ -1,5 +1,11 @@
 package application.controller;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,16 +17,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 public class Controller implements Initializable {
   public Socket socket;
@@ -62,10 +58,11 @@ public class Controller implements Initializable {
 
       message = dataInputStream.readUTF();
       System.out.println(message);
-      if (message.equals("You are player 1, matching successful")){
-        TURN = true;}
+      if (message.equals("You are player 1, matching successful")) {
+        TURN = true;
+      }
 
-      Runnable runnable =new Runnable() {
+      Runnable runnable = new Runnable() {
         @Override
         public void run() {
           while (true) {
@@ -76,12 +73,12 @@ public class Controller implements Initializable {
               int x = Integer.parseInt(split[0]);
               int y = Integer.parseInt(split[1]);
               Platform.runLater(() -> {
-                if (!TURN)
+                if (!TURN) {
                   turn.setText("My turn");
-
-                else
+                } else {
                   turn.setText("Opposite's turn");
-                if (!TURN && refreshBoard(x,y)){
+                }
+                if (!TURN && refreshBoard(x, y)) {
                   TURN = !TURN;
                 }
                 if (Win()) {
@@ -100,7 +97,7 @@ public class Controller implements Initializable {
                   alert.showAndWait();
                   System.exit(0);
                 }
-                if (Quit()){
+                if (Quit()) {
                   Alert alert = new Alert(Alert.AlertType.INFORMATION);
                   alert.setTitle("Error");
                   alert.setHeaderText(null);
@@ -128,11 +125,12 @@ public class Controller implements Initializable {
     game_panel.setOnMouseClicked(event -> {
       int x = (int) (event.getX() / BOUND);
       int y = (int) (event.getY() / BOUND);
-      if (TURN && refreshBoard(x,y)) {
-        if (!TURN){
-          turn.setText("My turn");}
-        else
+      if (TURN && refreshBoard(x, y)) {
+        if (!TURN) {
+          turn.setText("My turn");
+        } else {
           turn.setText("Opposite's turn");
+        }
         TURN = !TURN;
         message = x + " " + y;
         try {
@@ -157,7 +155,7 @@ public class Controller implements Initializable {
           alert.showAndWait();
           System.exit(0);
         }
-        if (Quit()){
+        if (Quit()) {
           Alert alert = new Alert(Alert.AlertType.INFORMATION);
           alert.setTitle("Error");
           alert.setHeaderText(null);
@@ -167,47 +165,50 @@ public class Controller implements Initializable {
         }
       }
     });
-        }
+  }
 
 
 
   private boolean Draw() {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        if (chessBoard[i][j] == EMPTY)
+        if (chessBoard[i][j] == EMPTY) {
           return false;
+        }
       }
     }
     return true;
   }
-  private boolean Quit(){
-    if (message.equals("stop")){
+
+  private boolean Quit() {
+    if (message.equals("stop")) {
       return true;
-  }return false;
+    }
+    return false;
   }
 
   private boolean Win() {
-    int horizonCheck =0;
-    int verticalCheck=0;
-    int diagonalCheck1 =0 ;
+    int horizonCheck = 0;
+    int verticalCheck = 0;
+    int diagonalCheck1 = 0;
     int diagonalCheck2 = 0;
     for (int i = 0; i < 3; i++) {
       if (chessBoard[i][0] == chessBoard[i][1] && chessBoard[i][1] == chessBoard[i][2] && chessBoard[i][0] != EMPTY) {
-        horizonCheck=1;
+        horizonCheck = 1;
       }
     }
     for (int i = 0; i < 3; i++) {
       if (chessBoard[0][i] == chessBoard[1][i] && chessBoard[1][i] == chessBoard[2][i] && chessBoard[0][i] != EMPTY) {
-        verticalCheck=1;
+        verticalCheck = 1;
       }
     }
     if (chessBoard[0][0] == chessBoard[1][1] && chessBoard[1][1] == chessBoard[2][2] && chessBoard[0][0] != EMPTY) {
-      diagonalCheck1=1;
+      diagonalCheck1 = 1;
     }
     if (chessBoard[0][2] == chessBoard[1][1] && chessBoard[1][1] == chessBoard[2][0] && chessBoard[0][2] != EMPTY) {
-      diagonalCheck2=1;
+      diagonalCheck2 = 1;
     }
-    if (((horizonCheck==1||verticalCheck==1)||diagonalCheck1==1)||diagonalCheck2==1){
+    if (((horizonCheck== 1|| verticalCheck==1)||diagonalCheck1==1)||diagonalCheck2==1) {
       return true;
     }
     return false;
